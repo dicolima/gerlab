@@ -1,6 +1,6 @@
 DB_USER=postgres
 DB_HOST=localhost
-DB_NAME=lab_foa
+DB_NAME=nome_bd
 DB_PASSWORD=senha_do_banco
 DB_PORT=5432
-JWT_SECRET=9aab63fa08a3ae5dbd0511db583784674ccde4d7b6989735b17c5435bcfc1ee3
+JWT_SECRET=senha_secreta
