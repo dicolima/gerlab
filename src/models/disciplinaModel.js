@@ -23,13 +23,28 @@ class DisciplinaModel {
         }
     }
 
+    // inserido para reoslver o problema do select na pagina solicitacoes.html
+    static async getDisciplinasByFaculdadeId(faculdade_id) {
+        try {
+            const query = `
+                SELECT dis_id, dis_nom, ativo
+                FROM disciplina
+                WHERE faculdade_id = $1 AND ativo = true
+            `;
+            const result = await pool.query(query, [faculdade_id]);
+            return result.rows;
+        } catch (error) {
+            throw new Error(`Erro ao buscar disciplinas: ${error.message}`);
+        }
+    }
+
     static async getAllDisciplinas() {
         try {
             const query = `
-                SELECT d.dis_id, d.dis_per, d.dis_mod, d.dis_ano, d.dis_nom, d.faculdade_id, 
-                       d.ativo, f.fac_cur AS faculdade_nome
+                SELECT d.dis_id, d.dis_per, d.dis_mod, d.dis_ano, d.dis_nom, f.fac_cur AS faculdade_nome, d.ativo
                 FROM disciplina d
                 LEFT JOIN faculdade f ON d.faculdade_id = f.fac_id
+                WHERE d.ativo = true
             `;
             const result = await pool.query(query);
             return result.rows;
@@ -37,6 +52,22 @@ class DisciplinaModel {
             throw new Error(`Erro ao buscar disciplinas: ${error.message}`);
         }
     }
+
+    //retornar se der ruim
+    // static async getAllDisciplinas() {
+    //     try {
+    //         const query = `
+    //             SELECT d.dis_id, d.dis_per, d.dis_mod, d.dis_ano, d.dis_nom, d.faculdade_id, 
+    //                    d.ativo, f.fac_cur AS faculdade_nome
+    //             FROM disciplina d
+    //             LEFT JOIN faculdade f ON d.faculdade_id = f.fac_id
+    //         `;
+    //         const result = await pool.query(query);
+    //         return result.rows;
+    //     } catch (error) {
+    //         throw new Error(`Erro ao buscar disciplinas: ${error.message}`);
+    //     }
+    // }
 
     static async getDisciplinaById(id) {
         try {

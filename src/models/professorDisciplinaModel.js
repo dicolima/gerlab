@@ -87,6 +87,25 @@ class ProfessorDisciplinaModel {
             throw new Error(`Erro ao reativar vínculo: ${error.message}`);
         }
     }
+
+    // Inserido para haver filtragem na pagina solicitacoes.html
+    static async getProfessoresByDisciplinaId(disciplina_id) {
+        try {
+            const query = `
+                SELECT pd.pd_id, pd.professor_id, pd.disciplina_id, pd.ativo,
+                       p.pro_nom || ' ' || p.pro_sob AS professor_nome
+                FROM professor_disciplina pd
+                LEFT JOIN professor p ON pd.professor_id = p.pro_id
+                WHERE pd.disciplina_id = $1 AND pd.ativo = true
+            `;
+            const result = await pool.query(query, [disciplina_id]);
+            return result.rows;
+        } catch (error) {
+            throw new Error(`Erro ao buscar professores por disciplina: ${error.message}`);
+        }
+    }
+
+
 }
 
 module.exports = ProfessorDisciplinaModel;

@@ -87,6 +87,22 @@ class ProfessorDisciplinaController {
             res.status(500).json({ error: `Erro ao reativar vínculo: ${error.message}` });
         }
     }
+
+    // adicionado para haver filtragem na página solicitacoes.html
+    static async getAllVinculos(req, res) {
+        try {
+            const { disciplina_id } = req.query;
+            let vinculos;
+            if (disciplina_id) {
+                vinculos = await ProfessorDisciplinaModel.getProfessoresByDisciplinaId(disciplina_id);
+            } else {
+                vinculos = await ProfessorDisciplinaModel.getAllVinculos();
+            }
+            res.json({ vinculos });
+        } catch (error) {
+            res.status(500).json({ error: `Erro ao buscar vínculos: ${error.message}` });
+        }
+    }
 }
 
 module.exports = ProfessorDisciplinaController;

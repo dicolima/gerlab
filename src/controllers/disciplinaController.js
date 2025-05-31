@@ -93,6 +93,37 @@ class DisciplinaController {
             res.status(500).json({ error: `Erro ao reativar disciplina: ${error.message}` });
         }
     }
+
+    // adicionado para haver filtragem na página solicitacoes.html
+    static async getAllDisciplinas(req, res) {
+        try {
+            const { faculdade_id } = req.query;
+            let disciplinas;
+            if (faculdade_id) {
+                disciplinas = await DisciplinaModel.getDisciplinasByFaculdadeId(faculdade_id);
+            } else {
+                disciplinas = await DisciplinaModel.getAllDisciplinas();
+            }
+            res.json({ disciplinas });
+        } catch (error) {
+            res.status(500).json({ error: `Erro ao buscar disciplinas: ${error.message}` });
+        }
+    }
+
+    // inserido para resolver o problema do select na pagina solicitacoes.html
+    static async getDisciplinasByFaculdadeId(req, res) {
+        try {
+            const { faculdade_id } = req.query;
+            if (!faculdade_id) {
+                return res.status(400).json({ error: 'faculdade_id é obrigatório' });
+            }
+            const disciplinas = await DisciplinaModel.getDisciplinasByFaculdadeId(faculdade_id);
+            res.status(200).json({ disciplinas });
+        } catch (error) {
+            console.error('Erro no controlador:', error);
+            res.status(500).json({ error: `Erro ao buscar disciplinas: ${error.message}` });
+        }
+    }
 }
 
 module.exports = DisciplinaController;

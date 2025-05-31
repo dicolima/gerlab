@@ -31,26 +31,48 @@ class SolicitacaoModel {
     }
 
     static async getAllSolicitacoes() {
-        try {
-            const query = `
-                SELECT s.id, s.sol_nom, s.sol_sob, s.sol_eml, s.sol_mat, s.professor_id,
-                       s.faculdade_id, s.disciplina_id, s.programa_id, s.predio_id, s.laboratorio_id,
-                       s.sol_dat_ini, s.sol_dat_fim, s.sol_hor_ini, s.sol_hor_fim, s.sol_sts,
-                       s.qtd_alunos, s.ativo,
-                       f.fac_nom AS faculdade_nome,
-                       d.dis_nom AS disciplina_nome,
-                       p.pro_nom || ' ' || p.pro_sob AS professor_nome
-                FROM solicitacoes s
-                LEFT JOIN faculdade f ON s.faculdade_id = f.fac_id
-                LEFT JOIN disciplina d ON s.disciplina_id = d.dis_id
-                LEFT JOIN professor p ON s.professor_id = p.pro_id
-            `;
-            const result = await pool.query(query);
-            return result.rows;
-        } catch (error) {
-            throw new Error(`Erro ao buscar solicitações: ${error.message}`);
-        }
+    try {
+        const query = `
+            SELECT s.id, s.sol_nom, s.sol_sob, s.sol_eml, s.sol_mat, s.professor_id,
+                   s.faculdade_id, s.disciplina_id, s.programa_id, s.predio_id, s.laboratorio_id,
+                   s.sol_dat_ini, s.sol_dat_fim, s.sol_hor_ini, s.sol_hor_fim, s.sol_sts,
+                   s.qtd_alunos, s.ativo,
+                   f.fac_cur AS faculdade_nome, -- Alterado de fac_nom para fac_cur
+                   d.dis_nom AS disciplina_nome,
+                   p.pro_nom || ' ' || p.pro_sob AS professor_nome
+            FROM solicitacoes s
+            LEFT JOIN faculdade f ON s.faculdade_id = f.fac_id
+            LEFT JOIN disciplina d ON s.disciplina_id = d.dis_id
+            LEFT JOIN professor p ON s.professor_id = p.pro_id
+        `;
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw new Error(`Erro ao buscar solicitações: ${error.message}`);
     }
+}
+
+    // static async getAllSolicitacoes() {
+    //     try {
+    //         const query = `
+    //             SELECT s.id, s.sol_nom, s.sol_sob, s.sol_eml, s.sol_mat, s.professor_id,
+    //                    s.faculdade_id, s.disciplina_id, s.programa_id, s.predio_id, s.laboratorio_id,
+    //                    s.sol_dat_ini, s.sol_dat_fim, s.sol_hor_ini, s.sol_hor_fim, s.sol_sts,
+    //                    s.qtd_alunos, s.ativo,
+    //                    f.fac_nom AS faculdade_nome,
+    //                    d.dis_nom AS disciplina_nome,
+    //                    p.pro_nom || ' ' || p.pro_sob AS professor_nome
+    //             FROM solicitacoes s
+    //             LEFT JOIN faculdade f ON s.faculdade_id = f.fac_id
+    //             LEFT JOIN disciplina d ON s.disciplina_id = d.dis_id
+    //             LEFT JOIN professor p ON s.professor_id = p.pro_id
+    //         `;
+    //         const result = await pool.query(query);
+    //         return result.rows;
+    //     } catch (error) {
+    //         throw new Error(`Erro ao buscar solicitações: ${error.message}`);
+    //     }
+    // }
 
     static async getSolicitacaoById(id) {
         try {

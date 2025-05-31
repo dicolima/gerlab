@@ -97,22 +97,20 @@
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="predio_id" class="form-label">Prédio:</label>
-                                    <select class="form-control" id="predio_id" name="predio_id">
+                                    <select class="form-control" id="predio_id" name="predio_id" required>
                                         <option value="">Selecione um prédio</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
+                                    <label for="qtd_alunos" class="form-label">Quantidade de Alunos:</label>
+                                    <input type="number" class="form-control" id="qtd_alunos" name="qtd_alunos" min="1" value="1" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
                                     <label for="programa_id" class="form-label">Programa:</label>
                                     <select class="form-control" id="programa_id" name="programa_id" required disabled>
                                         <option value="">Selecione um programa</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="laboratorio_id" class="form-label">Laboratório:</label>
-                                    <select class="form-control" id="laboratorio_id" name="laboratorio_id" disabled>
-                                        <option value="">Selecione um laboratório</option>
                                     </select>
                                 </div>
                             </div>
@@ -136,12 +134,16 @@
                                     <input type="time" class="form-control" id="sol_hor_fim" name="sol_hor_fim" required>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="qtd_alunos" class="form-label">Quantidade de Alunos:</label>
-                                <input type="number" class="form-control" id="qtd_alunos" name="qtd_alunos" min="1" value="1" required>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="laboratorio_id" class="form-label">Laboratório:</label>
+                                    <select class="form-control" id="laboratorio_id" name="laboratorio_id" required disabled>
+                                        <option value="">Selecione um laboratório</option>
+                                    </select>
+                                </div>
                             </div>
                             <input type="hidden" id="id" name="id">
-                            <button type="submit" class="btn btn-primary" id="submitButton">Cadastrar</button>
+                            <button type="submit" class="btn btn-primary" id="submitButton" disabled>Cadastrar</button>
                         </form>
                     </div>
                 </div>

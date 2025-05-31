@@ -17,18 +17,29 @@ class FaculdadeModel {
         }
     }
 
+    // inserido para resolver o problema do select na página solicitacoes.html
     static async getAllFaculdades() {
-        try {
-            const query = `
-                SELECT fac_id, fac_cur, professor_id, ativo
-                FROM faculdade
-            `;
-            const result = await pool.query(query);
-            return result.rows;
-        } catch (error) {
-            throw new Error(`Erro ao buscar faculdades: ${error.message}`);
-        }
+    try {
+        const query = 'SELECT fac_id, fac_cur AS fac_nom, ativo FROM faculdade WHERE ativo = true';
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw new Error(`Erro ao buscar faculdades: ${error.message}`);
     }
+}
+
+    // static async getAllFaculdades() {
+    //     try {
+    //         const query = `
+    //             SELECT fac_id, fac_cur, professor_id, ativo
+    //             FROM faculdade
+    //         `;
+    //         const result = await pool.query(query);
+    //         return result.rows;
+    //     } catch (error) {
+    //         throw new Error(`Erro ao buscar faculdades: ${error.message}`);
+    //     }
+    // }
 
     static async getFaculdadeById(id) {
         try {

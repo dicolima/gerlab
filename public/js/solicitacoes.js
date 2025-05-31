@@ -10,12 +10,14 @@ async function loadUserData() {
         });
         console.log('Resposta do endpoint /api/usuarios/user:', response.status, response.statusText);
         if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Erro na resposta:', errorData);
             if (response.status === 401 || response.status === 403) {
                 console.warn('Usuário não autenticado, redirecionando para login...');
                 window.location.href = '/login.html';
                 throw new Error('Não autenticado');
             }
-            throw new Error(`Erro HTTP! Status: ${response.status}`);
+            throw new Error(`Erro HTTP! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados do usuário:', data);
@@ -24,7 +26,6 @@ async function loadUserData() {
             throw new Error('Elemento #user-greeting não encontrado no DOM');
         }
         userGreeting.textContent = `Bem-vindo, ${data.usr_nom}`;
-        // Preencher campos automáticos
         document.getElementById('sol_nom').value = data.usr_nom;
         document.getElementById('sol_sob').value = data.usr_sob;
         document.getElementById('sol_eml').value = data.usr_eml;
@@ -43,8 +44,10 @@ async function loadFaculdadesSelect() {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/faculdades:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar faculdades! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar faculdades! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados das faculdades:', data);
@@ -59,7 +62,7 @@ async function loadFaculdadesSelect() {
         data.faculdades.filter(f => f.ativo).forEach(fac => {
             const option = document.createElement('option');
             option.value = fac.fac_id;
-            option.text = fac.fac_nom;
+            option.text = fac.fac_nom || fac.fac_cur || 'Faculdade Sem Nome';
             select.appendChild(option);
         });
         select.disabled = false;
@@ -77,8 +80,10 @@ async function loadDisciplinasSelect(faculdade_id) {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/disciplinas:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar disciplinas! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar disciplinas! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados das disciplinas:', data);
@@ -108,12 +113,19 @@ async function loadDisciplinasSelect(faculdade_id) {
 async function loadProfessoresSelect(disciplina_id) {
     try {
         console.log('Carregando professores para o select...', { disciplina_id });
-        const response = await fetch(`/api/professor_disciplinas?disciplina_id=${disciplina_id}`, {
+        const response = await fetch(`/api/professor_disciplina?disciplina_id=${disciplina_id}`, {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/professor_disciplina:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar professores! Status: ${response.status}`);
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (e) {
+                errorData = { error: `Erro HTTP ${response.status}: ${response.statusText}` };
+            }
+            throw new Error(`Erro ao carregar professores! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados dos professores:', data);
@@ -147,8 +159,10 @@ async function loadPrediosSelect() {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/predios:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar prédios! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar prédios! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados dos prédios:', data);
@@ -162,8 +176,8 @@ async function loadPrediosSelect() {
         }
         data.predios.filter(p => p.ativo).forEach(pred => {
             const option = document.createElement('option');
-            option.value = pred.pre_id;
-            option.text = pred.pre_nom;
+            option.value = pred.prd_id;
+            option.text = pred.prd_nom;
             select.appendChild(option);
         });
         select.disabled = false;
@@ -173,16 +187,18 @@ async function loadPrediosSelect() {
     }
 }
 
-// Carregar programas no select com base no laboratório
-async function loadProgramasSelect(laboratorio_id) {
+// Carregar programas no select (livre, consulta entidade programas)
+async function loadProgramasSelect() {
     try {
-        console.log('Carregando programas para o select...', { laboratorio_id });
-        const response = await fetch(`/api/laboratorio_programas?laboratorio_id=${laboratorio_id}`, {
+        console.log('Carregando programas para o select...');
+        const response = await fetch('/api/programas', {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/programas:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar programas! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar programas! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados dos programas:', data);
@@ -191,13 +207,13 @@ async function loadProgramasSelect(laboratorio_id) {
             throw new Error('Elemento #programa_id não encontrado no DOM');
         }
         select.innerHTML = '<option value="">Selecione um programa</option>';
-        if (!data.vinculos || !Array.isArray(data.vinculos)) {
+        if (!data.programas || !Array.isArray(data.programas)) {
             throw new Error('Formato de dados de programas inválido');
         }
-        data.vinculos.filter(v => v.ativo).forEach(vinc => {
+        data.programas.filter(p => p.ativo).forEach(prog => {
             const option = document.createElement('option');
-            option.value = vinc.programa_id;
-            option.text = vinc.programa_nome;
+            option.value = prog.prg_id;
+            option.text = prog.prg_nom;
             select.appendChild(option);
         });
         select.disabled = false;
@@ -208,15 +224,16 @@ async function loadProgramasSelect(laboratorio_id) {
     }
 }
 
-// Carregar laboratórios no select com base em predio, qtd_alunos, programa, data e horário
-async function loadLaboratoriosSelect(predio_id, qtd_alunos, programa_id, sol_dat_ini, sol_hor_ini, sol_hor_fim) {
+// Carregar laboratórios no select com base em predio, programa, qtd_alunos, data e horário
+async function loadLaboratoriosSelect(predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim) {
     try {
-        console.log('Carregando laboratórios para o select...', { predio_id, qtd_alunos, programa_id, sol_dat_ini, sol_hor_ini, sol_hor_fim });
+        console.log('Carregando laboratórios para o select...', { predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim });
         const params = new URLSearchParams({
             predio_id: predio_id || '',
-            qtd_alunos: qtd_alunos || '',
             programa_id: programa_id || '',
+            qtd_alunos: qtd_alunos || '',
             sol_dat_ini: sol_dat_ini || '',
+            sol_dat_fim: sol_dat_fim || '',
             sol_hor_ini: sol_hor_ini || '',
             sol_hor_fim: sol_hor_fim || ''
         });
@@ -224,8 +241,10 @@ async function loadLaboratoriosSelect(predio_id, qtd_alunos, programa_id, sol_da
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/laboratorios/available:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar laboratórios! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar laboratórios! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados dos laboratórios:', data);
@@ -236,6 +255,12 @@ async function loadLaboratoriosSelect(predio_id, qtd_alunos, programa_id, sol_da
         select.innerHTML = '<option value="">Selecione um laboratório</option>';
         if (!data.laboratorios || !Array.isArray(data.laboratorios)) {
             throw new Error('Formato de dados de laboratórios inválido');
+        }
+        if (data.laboratorios.length === 0) {
+            console.log('Nenhum laboratório disponível para os critérios fornecidos');
+            showFeedback('Nenhum laboratório disponível para os critérios selecionados', 'warning');
+            select.disabled = true;
+            return;
         }
         data.laboratorios.filter(l => l.ativo).forEach(lab => {
             const option = document.createElement('option');
@@ -261,7 +286,8 @@ async function loadSolicitacoes() {
         });
         console.log('Resposta do endpoint /api/solicitacoes:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar solicitações! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Erro ao carregar solicitações! Status: ${response.status}`);
         }
         const data = await response.json();
         console.log('Dados das solicitações:', data);
@@ -306,7 +332,7 @@ async function loadSolicitacoes() {
         if (tableBody) {
             tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Erro ao carregar solicitações</td></tr>';
         }
-        showFeedback('Erro ao carregar solicitações: ' + error.message, 'danger');
+        showFeedback(`Erro ao carregar solicitações: ${error.message}`, 'danger');
     }
 }
 
@@ -318,8 +344,10 @@ async function editSolicitacao(id) {
             method: 'GET',
             credentials: 'include'
         });
+        console.log('Resposta do endpoint /api/solicitacoes/:id:', response.status, response.statusText);
         if (!response.ok) {
-            throw new Error(`Erro ao carregar solicitação! Status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(`Erro ao carregar solicitação! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
         }
         const data = await response.json();
         console.log('Dados da solicitação para edição:', data);
@@ -338,9 +366,8 @@ async function editSolicitacao(id) {
         await loadProfessoresSelect(sol.disciplina_id);
         document.getElementById('professor_id').value = sol.professor_id;
         document.getElementById('predio_id').value = sol.predio_id || '';
-        await loadProgramasSelect(sol.laboratorio_id || '');
-        document.getElementById('programa_id').value = sol.programa_id;
-        await loadLaboratoriosSelect(sol.predio_id, sol.qtd_alunos, sol.programa_id, sol.sol_dat_ini, sol.sol_hor_ini, sol.sol_hor_fim);
+        document.getElementById('programa_id').value = sol.programa_id || '';
+        await loadLaboratoriosSelect(sol.predio_id, sol.programa_id, sol.qtd_alunos, sol.sol_dat_ini, sol.sol_dat_fim, sol.sol_hor_ini, sol.sol_hor_fim);
         document.getElementById('laboratorio_id').value = sol.laboratorio_id || '';
         document.getElementById('sol_dat_ini').value = sol.sol_dat_ini;
         document.getElementById('sol_dat_fim').value = sol.sol_dat_fim;
@@ -368,8 +395,10 @@ async function deleteSolicitacao(id, ativo) {
                 method: 'POST',
                 credentials: 'include'
             });
+            console.log('Resposta do endpoint /api/solicitacoes/:id/:action:', response.status, response.statusText);
             if (!response.ok) {
-                throw new Error(`Erro ao ${action} solicitação! Status: ${response.status}`);
+                const errorData = await response.json();
+                throw new Error(`Erro ao ${action} solicitação! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
             }
             loadSolicitacoes();
             showFeedback(`Solicitação ${action}da com sucesso!`, 'success');
@@ -396,60 +425,107 @@ function showFeedback(message, type) {
     }
 }
 
+// Listener para o select de laboratórios
+document.getElementById('laboratorio_id').addEventListener('change', function() {
+    const laboratorioId = this.value;
+    const submitButton = document.getElementById('submitButton');
+    if (submitButton) {
+        submitButton.disabled = !laboratorioId || laboratorioId === '';
+        console.log('Botão Cadastrar:', submitButton.disabled ? 'desabilitado' : 'habilitado', 'laboratorio_id:', laboratorioId);
+    } else {
+        console.error('Elemento #submitButton não encontrado no DOM');
+    }
+});
+
 // Manipular eventos do modal
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Inicializando carregamento de dados...');
     const modalElement = document.getElementById('solicitacaoModal');
     if (!modalElement) {
         console.error('Elemento #solicitacaoModal não encontrado no DOM');
         return;
     }
 
-    // Resetar formulário ao abrir modal para nova solicitação
-    modalElement.addEventListener('show.bs.modal', async (event) => {
-        if (event.relatedTarget && event.relatedTarget.id === 'newSolicitacaoBtn') {
-            console.log('Modal aberto para nova solicitação');
-            document.getElementById('solicitacaoForm').reset();
-            document.getElementById('id').value = '';
-            await loadUserData();
-            document.getElementById('faculdade_id').value = '';
-            document.getElementById('disciplina_id').innerHTML = '<option value="">Selecione uma disciplina</option>';
-            document.getElementById('disciplina_id').disabled = true;
-            document.getElementById('professor_id').innerHTML = '<option value="">Selecione um professor</option>';
-            document.getElementById('professor_id').disabled = true;
-            document.getElementById('predio_id').value = '';
-            document.getElementById('programa_id').innerHTML = '<option value="">Selecione um programa</option>';
-            document.getElementById('programa_id').disabled = true;
-            document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
-            document.getElementById('laboratorio_id').disabled = true;
-            document.getElementById('sol_dat_ini').value = '';
-            document.getElementById('sol_dat_fim').value = '';
-            document.getElementById('sol_hor_ini').value = '';
-            document.getElementById('sol_hor_fim').value = '';
-            document.getElementById('qtd_alunos').value = '1';
-            document.getElementById('solicitacaoModalLabel').textContent = 'Cadastrar Nova Solicitação';
-            document.getElementById('submitButton').textContent = 'Cadastrar';
-            document.getElementById('modalFeedback').style.display = 'none';
-            await loadFaculdadesSelect();
-            await loadPrediosSelect();
-        }
+    // Carregar dados do usuário e solicitações ao iniciar
+    loadUserData();
+    loadSolicitacoes();
+
+    // Evento show.bs.modal apenas para log
+    modalElement.addEventListener('show.bs.modal', (event) => {
+        console.log('Modal sendo aberto, relatedTarget:', event.relatedTarget ? event.relatedTarget.id : 'undefined');
     });
 
     // Resetar formulário ao fechar modal
     modalElement.addEventListener('hidden.bs.modal', () => {
         console.log('Modal fechado, resetando formulário');
-        document.getElementById('solicitacaoForm').reset();
+        const form = document.getElementById('solicitacaoForm');
+        const feedback = document.getElementById('modalFeedback');
+        const modalLabel = document.getElementById('solicitacaoModalLabel');
+        const submitButton = document.getElementById('submitButton');
+        form.reset();
         document.getElementById('id').value = '';
+        document.getElementById('faculdade_id').value = '';
         document.getElementById('disciplina_id').innerHTML = '<option value="">Selecione uma disciplina</option>';
         document.getElementById('disciplina_id').disabled = true;
         document.getElementById('professor_id').innerHTML = '<option value="">Selecione um professor</option>';
         document.getElementById('professor_id').disabled = true;
-        document.getElementById('programa_id').innerHTML = '<option value="">Selecione um programa</option>';
-        document.getElementById('programa_id').disabled = true;
+        document.getElementById('predio_id').value = '';
+        document.getElementById('programa_id').value = '';
         document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
         document.getElementById('laboratorio_id').disabled = true;
-        document.getElementById('solicitacaoModalLabel').textContent = 'Cadastrar Nova Solicitação';
-        document.getElementById('submitButton').textContent = 'Cadastrar';
-        document.getElementById('modalFeedback').style.display = 'none';
+        modalLabel.textContent = 'Cadastrar Nova Solicitação';
+        submitButton.textContent = 'Cadastrar';
+        if (feedback) feedback.style.display = 'none';
+    });
+
+    // Abrir modal para nova solicitação e carregar selects
+    document.getElementById('newSolicitacaoBtn').addEventListener('click', async () => {
+        console.log('Botão Nova Solicitação clicado');
+        const form = document.getElementById('solicitacaoForm');
+        const feedback = document.getElementById('modalFeedback');
+        const modalLabel = document.getElementById('solicitacaoModalLabel');
+        const submitButton = document.getElementById('submitButton');
+
+        // Resetar formulário
+        form.reset();
+        document.getElementById('id').value = '';
+        document.getElementById('faculdade_id').value = '';
+        document.getElementById('disciplina_id').innerHTML = '<option value="">Selecione uma disciplina</option>';
+        document.getElementById('disciplina_id').disabled = true;
+        document.getElementById('professor_id').innerHTML = '<option value="">Selecione um professor</option>';
+        document.getElementById('professor_id').disabled = true;
+        document.getElementById('predio_id').value = '';
+        document.getElementById('programa_id').value = '';
+        document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
+        document.getElementById('laboratorio_id').disabled = true;
+        document.getElementById('sol_dat_ini').value = '';
+        document.getElementById('sol_dat_fim').value = '';
+        document.getElementById('sol_hor_ini').value = '';
+        document.getElementById('sol_hor_fim').value = '';
+        document.getElementById('qtd_alunos').value = '1';
+        modalLabel.textContent = 'Cadastrar Nova Solicitação';
+        submitButton.textContent = 'Cadastrar';
+        if (feedback) feedback.style.display = 'none';
+
+        // Carregar dados do usuário
+        await loadUserData();
+
+        // Abrir modal
+        const modal = new bootstrap.Modal(modalElement);
+        modal.show();
+
+        // Carregar selects após abrir o modal
+        try {
+            await loadFaculdadesSelect();
+            console.log('loadFaculdadesSelect concluído');
+            await loadPrediosSelect();
+            console.log('loadPrediosSelect concluído');
+            await loadProgramasSelect();
+            console.log('loadProgramasSelect concluído');
+        } catch (error) {
+            console.error('Erro ao carregar selects:', error);
+            showFeedback('Erro ao carregar selects: ' + error.message, 'danger');
+        }
     });
 
     // Manipular mudança na faculdade
@@ -485,12 +561,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Manipular mudança na quantidade de alunos
-    document.getElementById('qtd_alunos').addEventListener('input', async () => {
+    document.getElementById('qtd_alunos').addEventListener('change', async () => {
         await updateLaboratorios();
     });
 
-    // Manipular mudança nas datas e horários
+    // Manipular mudanças nas datas e horários
     document.getElementById('sol_dat_ini').addEventListener('change', async () => {
+        await updateLaboratorios();
+    });
+    document.getElementById('sol_dat_fim').addEventListener('change', async () => {
         await updateLaboratorios();
     });
     document.getElementById('sol_hor_ini').addEventListener('change', async () => {
@@ -500,28 +579,19 @@ document.addEventListener('DOMContentLoaded', () => {
         await updateLaboratorios();
     });
 
-    // Manipular mudança no laboratório para carregar programas
-    document.getElementById('laboratorio_id').addEventListener('change', async (e) => {
-        const laboratorio_id = e.target.value;
-        document.getElementById('programa_id').innerHTML = '<option value="">Selecione um programa</option>';
-        document.getElementById('programa_id').disabled = true;
-        if (laboratorio_id) {
-            await loadProgramasSelect(laboratorio_id);
-        }
-    });
-
     // Função auxiliar para atualizar laboratórios
     async function updateLaboratorios() {
         const predio_id = document.getElementById('predio_id').value;
-        const qtd_alunos = document.getElementById('qtd_alunos').value;
         const programa_id = document.getElementById('programa_id').value;
+        const qtd_alunos = document.getElementById('qtd_alunos').value;
         const sol_dat_ini = document.getElementById('sol_dat_ini').value;
+        const sol_dat_fim = document.getElementById('sol_dat_fim').value;
         const sol_hor_ini = document.getElementById('sol_hor_ini').value;
         const sol_hor_fim = document.getElementById('sol_hor_fim').value;
         document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
         document.getElementById('laboratorio_id').disabled = true;
-        if (predio_id && qtd_alunos && sol_dat_ini && sol_hor_ini && sol_hor_fim) {
-            await loadLaboratoriosSelect(predio_id, qtd_alunos, programa_id, sol_dat_ini, sol_hor_ini, sol_hor_fim);
+        if (predio_id && programa_id && qtd_alunos && sol_dat_ini && sol_dat_fim && sol_hor_ini && sol_hor_fim) {
+            await loadLaboratoriosSelect(predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim);
         }
     }
 
@@ -547,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 credentials: 'include',
                 body: new URLSearchParams(data).toString()
             });
-            const result = await response.json();
+            console.log('Resposta do endpoint /api/solicitacoes:', response.status, response.statusText);
             if (response.ok) {
                 document.getElementById('solicitacaoForm').reset();
                 document.getElementById('id').value = '';
@@ -555,21 +625,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 loadSolicitacoes();
                 showFeedback(data.id ? 'Solicitação atualizada com sucesso!' : 'Solicitação criada com sucesso!', 'success');
             } else {
-                showFeedback(result.error || 'Erro ao salvar solicitação', 'danger');
+                const errorData = await response.json();
+                showFeedback(errorData.error || 'Erro ao salvar solicitação', 'danger');
             }
         } catch (error) {
             console.error('Erro ao enviar formulário:', error);
             showFeedback('Erro ao salvar solicitação: ' + error.message, 'danger');
         }
     });
-
-    // Abrir modal para nova solicitação
-    document.getElementById('newSolicitacaoBtn').addEventListener('click', () => {
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-    });
-
-    // Carregar solicitações ao iniciar
-    console.log('Inicializando carregamento de dados...');
-    loadSolicitacoes();
 });
