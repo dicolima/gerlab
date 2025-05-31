@@ -1,20 +1,50 @@
 // public/js/programas.js
 // Carregar nome do usuário
-fetch('/api/user', { credentials: 'include' })
-    .then(response => {
+// Carregar nome do usuário
+async function loadUserGreeting() {
+    try {
+        console.log('Carregando usuário...');
+        const response = await fetch('/api/usuarios/user', {
+            method: 'GET',
+            credentials: 'include'
+        });
+        console.log('Resposta do endpoint /api/usuarios/user:', response.status, response.statusText);
         if (!response.ok) {
-            window.location.href = '/login.html';
-            throw new Error('Não autenticado');
+            if (response.status === 401 || response.status === 403) {
+                console.warn('Usuário não autenticado, redirecionando para login...');
+                window.location.href = '/login.html';
+                throw new Error('Não autenticado');
+            }
+            throw new Error(`Erro HTTP! Status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById('user-greeting').textContent = `Bem-vindo, ${data.usr_nom}`;
-    })
-    .catch(error => {
+        const data = await response.json();
+        console.log('Dados do usuário:', data);
+        const userGreeting = document.getElementById('user-greeting');
+        if (!userGreeting) {
+            throw new Error('Elemento #user-greeting não encontrado no DOM');
+        }
+        userGreeting.textContent = `Bem-vindo, ${data.usr_nom}`;
+    } catch (error) {
         console.error('Erro ao carregar usuário:', error);
         window.location.href = '/login.html';
-    });
+    }
+}
+
+// fetch('/api/user', { credentials: 'include' })
+//     .then(response => {
+//         if (!response.ok) {
+//             window.location.href = '/login.html';
+//             throw new Error('Não autenticado');
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         document.getElementById('user-greeting').textContent = `Bem-vindo, ${data.usr_nom}`;
+//     })
+//     .catch(error => {
+//         console.error('Erro ao carregar usuário:', error);
+//         window.location.href = '/login.html';
+//     });
 
 // Carregar laboratórios no select
 async function loadLaboratoriosSelect() {

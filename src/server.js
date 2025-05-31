@@ -10,6 +10,8 @@ const faculdadeRoutes = require('./routes/faculdadeRoutes');
 const disciplinaRoutes = require('./routes/disciplinaRoutes');
 const programaRoutes = require('./routes/programaRoutes');
 const professorDisciplinaRoutes = require('./routes/professorDisciplinaRoutes');
+const laboratorioProgramaRoutes = require('./routes/laboratorioProgramaRoutes'); // Adicionado
+const solicitacaoRoutes = require('./routes/solicitacaoRoutes'); // Adicionado
 
 const app = express();
 
@@ -45,7 +47,9 @@ app.use('/api/professores', professorRoutes);
 app.use('/api/faculdades', faculdadeRoutes);
 app.use('/api/disciplinas', disciplinaRoutes);
 app.use('/api/programas', programaRoutes);
-app.use('/api/professor-disciplinas', professorDisciplinaRoutes);
+app.use('/api/professor_disciplina', professorDisciplinaRoutes);
+app.use('/api/laboratorio_programas', laboratorioProgramaRoutes);
+app.use('/api/solicitacoes', solicitacaoRoutes); // Adicionado
 
 
 // Start server
