@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-entity="usuarios">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GerLab - Gerenciar Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header bg-primary text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">GerLab - Gerenciar Usuários</h1>
+            <div class="user-info">
+                <span id="user-greeting" class="me-3">Bem-vindo, Carregando...</span>
+                <button class="btn btn-light btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            </div>
+        </div>
+    </header>
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Usuários Cadastrados</h2>
+            <button class="btn btn-primary" id="newUsuarioBtn"><i class="fas fa-plus"></i> Novo Usuário</button>
+        </div>
+        <div id="error" class="alert alert-danger" style="display: none;"></div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Sobrenome</th>
+                        <th>Email</th>
+                        <th>Matrícula</th>
+                        <th>Prédio</th>
+                        <th>Laboratório</th>
+                        <th>Telefone</th>
+                        <th>Nível</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="usuariosTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Modal para Cadastro/Edição -->
+        <div class="modal fade" id="usuarioModal" tabindex="-1" aria-labelledby="usuarioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="usuarioModalLabel">Cadastrar Novo Usuário</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalFeedback" class="alert alert-dismissible fade show" style="display: none;"></div>
+                        <form id="usuarioForm">
+                            <div class="mb-3">
+                                <label for="usr_nom" class="form-label">Nome:</label>
+                                <input type="text" class="form-control" id="usr_nom" name="usr_nom" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_sob" class="form-label">Sobrenome:</label>
+                                <input type="text" class="form-control" id="usr_sob" name="usr_sob" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_eml" class="form-label">Email:</label>
+                                <input type="email" class="form-control" id="usr_eml" name="usr_eml" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_mat" class="form-label">Matrícula:</label>
+                                <input type="text" class="form-control" id="usr_mat" name="usr_mat" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_pre" class="form-label">Prédio:</label>
+                                <input type="text" class="form-control" id="usr_pre" name="usr_pre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_lab" class="form-label">Laboratório:</label>
+                                <input type="text" class="form-control" id="usr_lab" name="usr_lab">
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_sen" class="form-label">Senha:</label>
+                                <input type="password" class="form-control" id="usr_sen" name="usr_sen">
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_tel" class="form-label">Telefone:</label>
+                                <input type="text" class="form-control" id="usr_tel" name="usr_tel">
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_nvl" class="form-label">Nível:</label>
+                                <input type="text" class="form-control" id="usr_nvl" name="usr_nvl">
+                            </div>
+                            <input type="hidden" id="usr_id" name="usr_id">
+                            <button type="submit" class="btn btn-primary" id="submitButton">Cadastrar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/usuarios.js"></script>
+</body>
+</html>

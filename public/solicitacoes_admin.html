@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GerLab - Gerenciar Solicitações</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header bg-primary text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">GerLab - Gerenciar Solicitações</h1>
+            <div class="user-info">
+                <span id="user-greeting" class="me-3">Bem-vindo, Carregando...</span>
+                <button class="btn btn-light btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            </div>
+        </div>
+    </header>
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Solicitações Cadastradas</h2>
+        </div>
+        <div id="error" class="alert alert-danger" style="display: none;"></div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Faculdade</th>
+                        <th>Disciplina</th>
+                        <th>Professor</th>
+                        <th>Programa</th>
+                        <th>Laboratório</th>
+                        <th>Data Início</th>
+                        <th>Horário</th>
+                        <th>Status</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="solicitacoesTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Modal para Edição -->
+        <div class="modal fade" id="solicitacaoModal" tabindex="-1" aria-labelledby="solicitacaoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="solicitacaoModalLabel">Editar Solicitação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalFeedback" class="alert alert-dismissible fade show" style="display: none;"></div>
+                        <form id="solicitacaoAdminForm" class="row g-3">
+                            <div class="col-md-6">
+                                <label for="sol_nom" class="form-label">Nome:</label>
+                                <input type="text" class="form-control" id="sol_nom" name="sol_nom" maxlength="100" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_sob" class="form-label">Sobrenome:</label>
+                                <input type="text" class="form-control" id="sol_sob" name="sol_sob" maxlength="100" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_eml" class="form-label">E-mail:</label>
+                                <input type="email" class="form-control" id="sol_eml" name="sol_eml" maxlength="100" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_mat" class="form-label">Matrícula:</label>
+                                <input type="text" class="form-control" id="sol_mat" name="sol_mat" maxlength="100" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="faculdade_id" class="form-label">Faculdade:</label>
+                                <select class="form-control" id="faculdade_id" name="faculdade_id" required>
+                                    <option value="">Selecione uma faculdade</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="disciplina_id" class="form-label">Disciplina:</label>
+                                <select class="form-control" id="disciplina_id" name="disciplina_id" required>
+                                    <option value="">Selecione uma disciplina</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="professor_id" class="form-label">Professor:</label>
+                                <select class="form-control" id="professor_id" name="professor_id" required>
+                                    <option value="">Selecione um professor</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="programa_id" class="form-label">Programa:</label>
+                                <select class="form-control" id="programa_id" name="programa_id" required>
+                                    <option value="">Selecione um programa</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="predio_id" class="form-label">Prédio:</label>
+                                <select class="form-control" id="predio_id" name="predio_id">
+                                    <option value="">Selecione um prédio (opcional)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="laboratorio_id" class="form-label">Laboratório:</label>
+                                <select class="form-control" id="laboratorio_id" name="laboratorio_id" required>
+                                    <option value="">Selecione um laboratório</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_dat_ini" class="form-label">Data Início:</label>
+                                <input type="date" class="form-control" id="sol_dat_ini" name="sol_dat_ini" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_dat_fim" class="form-label">Data Fim:</label>
+                                <input type="date" class="form-control" id="sol_dat_fim" name="sol_dat_fim" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_hor_ini" class="form-label">Horário Início:</label>
+                                <input type="time" class="form-control" id="sol_hor_ini" name="sol_hor_ini" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_hor_fim" class="form-label">Horário Fim:</label>
+                                <input type="time" class="form-control" id="sol_hor_fim" name="sol_hor_fim" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sol_sts" class="form-label">Status:</label>
+                                <select class="form-control" id="sol_sts" name="sol_sts" required>
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Aprovado">Aprovado</option>
+                                    <option value="Rejeitado">Rejeitado</option>
+                                </select>
+                            </div>
+                            <input type="hidden" id="id" name="id">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary" id="submitButton">Atualizar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/solicitacoes_admin.js"></script>
+</body>
+</html>

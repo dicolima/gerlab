@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-entity="predios">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GerLab - Gerenciar Prédios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="header bg-primary text-white p-3">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="h3 mb-0">GerLab - Gerenciar Prédios</h1>
+            <div class="user-info">
+                <span id="user-greeting" class="me-3">Bem-vindo, Carregando...</span>
+                <button class="btn btn-light btn-sm" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</button>
+            </div>
+        </div>
+    </header>
+    <main class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Prédios Cadastrados</h2>
+            <button class="btn btn-primary" id="newPredioBtn"><i class="fas fa-plus"></i> Novo Prédio</button>
+        </div>
+        <div id="error" class="alert alert-danger" style="display: none;"></div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Número</th>
+                        <th>Nome</th>
+                        <th>Usuário (Matrícula)</th>
+                        <th>Data Entrada</th>
+                        <th>Data Saída</th>
+                        <th>Horário Entrada</th>
+                        <th>Horário Saída</th>
+                        <th>Dia Início</th>
+                        <th>Dia Fim</th>
+                        <th>Ativo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="prediosTable"></tbody>
+            </table>
+        </div>
+
+        <!-- Modal para Cadastro/Edição -->
+        <div class="modal fade" id="predioModal" tabindex="-1" aria-labelledby="predioModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="predioModalLabel">Cadastrar Novo Prédio</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="modalFeedback" class="alert alert-dismissible fade show" style="display: none;"></div>
+                        <form id="predioForm">
+                            <div class="mb-3">
+                                <label for="prd_num" class="form-label">Número (3 dígitos):</label>
+                                <input type="text" class="form-control" id="prd_num" name="prd_num" maxlength="3" pattern="[0-9]{3}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="prd_nom" class="form-label">Nome:</label>
+                                <input type="text" class="form-control" id="prd_nom" name="prd_nom" maxlength="50" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="usr_mat" class="form-label">Usuário (Matrícula):</label>
+                                <select class="form-control" id="usr_mat" name="usr_mat" required>
+                                    <option value="">Selecione um usuário</option>
+                                    <!-- Usuários serão carregados via JS -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="dat_ent" class="form-label">Data Entrada:</label>
+                                <input type="date" class="form-control" id="dat_ent" name="dat_ent">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dat_sai" class="form-label">Data Saída:</label>
+                                <input type="date" class="form-control" id="dat_sai" name="dat_sai">
+                            </div>
+                            <div class="mb-3">
+                                <label for="hor_ent" class="form-label">Horário Entrada:</label>
+                                <input type="time" class="form-control" id="hor_ent" name="hor_ent">
+                            </div>
+                            <div class="mb-3">
+                                <label for="hor_sai" class="form-label">Horário Saída:</label>
+                                <input type="time" class="form-control" id="hor_sai" name="hor_sai">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dia_ini" class="form-label">Dia Início:</label>
+                                <input type="text" class="form-control" id="dia_ini" name="dia_ini" maxlength="50">
+                            </div>
+                            <div class="mb-3">
+                                <label for="dia_fim" class="form-label">Dia Fim:</label>
+                                <input type="text" class="form-control" id="dia_fim" name="dia_fim" maxlength="50">
+                            </div>
+                            <input type="hidden" id="prd_id" name="prd_id">
+                            <button type="submit" class="btn btn-primary" id="submitButton">Cadastrar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/predios.js"></script>
+</body>
+</html>
