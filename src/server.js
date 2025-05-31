@@ -12,6 +12,7 @@ const programaRoutes = require('./routes/programaRoutes');
 const professorDisciplinaRoutes = require('./routes/professorDisciplinaRoutes');
 const laboratorioProgramaRoutes = require('./routes/laboratorioProgramaRoutes'); // Adicionado
 const solicitacaoRoutes = require('./routes/solicitacaoRoutes'); // Adicionado
+const aprovacaoRoutes = require('./routes/aprovacaoRoutes'); // Adicionado
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use('/api/programas', programaRoutes);
 app.use('/api/professor_disciplina', professorDisciplinaRoutes);
 app.use('/api/laboratorio_programas', laboratorioProgramaRoutes);
 app.use('/api/solicitacoes', solicitacaoRoutes); // Adicionado
+app.use('/api/aprovacoes', aprovacaoRoutes); // Adicionado
 
 
 // Start server
