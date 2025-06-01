@@ -13,6 +13,8 @@ const professorDisciplinaRoutes = require('./routes/professorDisciplinaRoutes');
 const laboratorioProgramaRoutes = require('./routes/laboratorioProgramaRoutes'); // Adicionado
 const solicitacaoRoutes = require('./routes/solicitacaoRoutes'); // Adicionado
 const aprovacaoRoutes = require('./routes/aprovacaoRoutes'); // Adicionado
+const reservaRoutes = require('./routes/reservaRoutes');
+
 
 const app = express();
 
@@ -52,7 +54,15 @@ app.use('/api/professor_disciplina', professorDisciplinaRoutes);
 app.use('/api/laboratorio_programas', laboratorioProgramaRoutes);
 app.use('/api/solicitacoes', solicitacaoRoutes); // Adicionado
 app.use('/api/aprovacoes', aprovacaoRoutes); // Adicionado
+app.use('/api/reservas', reservaRoutes);
+// Rotas
+//app.use('/api', reservaRoutes);
 
+app.use(express.static(path.join(__dirname, '../public'), {
+  setHeaders: (res, path) => {
+    console.log(`Servindo arquivo estático: ${path}`);
+  }
+}));
 
 // Start server
 const PORT = process.env.PORT || 3000;

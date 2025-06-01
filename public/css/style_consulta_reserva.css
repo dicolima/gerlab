@@ -1,0 +1,90 @@
+/* Define a cor de fundo da página */
+body {
+    background-color: #f2f2f2;
+    }
+    
+    /* Define o estilo da tabela */
+    table {
+    border-collapse: collapse;
+    margin: 20px auto;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Define o estilo das células da tabela */
+    td {
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #666;
+    font-size: 12px;
+    }
+    
+    /* Define a cor de fundo das células preenchidas */
+    td:not(:empty) {
+    background-color: #ffffcc;
+    }
+    
+    /* Define a cor de fundo das células vazias */
+    td:empty {
+    background-color: #c1e7c3;
+    }
+    
+    /* Define a cor do texto das células preenchidas */
+    td:not(:empty) {
+    color: #333;
+    }
+    
+    /* Define o estilo do título da coluna A */
+    tr:first-child td:first-child {
+    font-weight: bold;
+    background-color: #ddd;
+    }
+    
+    /* Define o estilo das células da primeira linha */
+    tr:first-child td:not(:first-child) {
+    font-weight: bold;
+    background-color: #ddd;
+    }
+    
+    /* Define o estilo das células da primeira coluna */
+    td:first-child {
+    font-weight: bold;
+    }
+    
+    /* Define a cor de fundo das células das colunas dos laboratórios */
+    td[data-lab] {
+    background-color: #f5f5f5;
+    }
+    
+    /* Define a cor de fundo das células da linha dos horários */
+    tr[data-horario] td {
+    background-color: #ff00ff;
+    }
+    
+    /* Define o estilo das bordas das células */
+    td {
+    border-top: 2px solid #666;
+    border-left: 2px solid #666;
+    border-right: 2px solid #666;
+    }
+    
+    /* Define o estilo das bordas das células da primeira coluna */
+    td:first-child {
+    border-left: none;
+    }
+    
+    /* Define o estilo das bordas das células da primeira linha */
+    tr:first-child td {
+    border-top: none;
+    }
+    
+    /* Define o estilo da borda da última linha */
+    tr:last-child td {
+    border-bottom: none;
+    }
+    
+    /* Define o estilo da borda da última coluna */
+    td:last-child {
+    border-right: none;
+    }

@@ -1,0 +1,125 @@
+/* Ajuste de tabela congelada */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background-color: #f5f5f5;
+}
+
+form {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 20px;
+  width: 300px;
+  margin: 0 auto;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+input[type="date"] {
+  padding: 5px;
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+/* Botão voltar */
+.botao-voltar {
+  display: inline-block;
+  padding: 10px;
+  background-color: #808080;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  margin-top: 10px;
+}
+
+.botao-voltar:hover {
+  background-color: #45a049;
+}
+
+/* Botão buscar */
+input[type="submit"] {
+  padding: 10px;
+  background-color: #4CAF50;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  border-radius: 3px;
+}
+
+input[type="submit"]:hover {
+  background-color: #45a049;
+}
+
+/* Estilos para a página */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Estilo para a tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+/* Congelar a primeira linha */
+tr:first-child {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+tr:first-child th {
+  position: sticky;
+  background-color: #f2f2f2;
+  left: 0;
+}
+
+th:first-child,
+tr:first-child th {
+  left: 0;
+}
+
+/* Estilo para a rolagem da tabela */
+tbody {
+  display: block;
+  overflow-y: scroll;
+  height: calc(100vh - 350px);
+}
+
+tr {
+  display: table;
+  table-layout: fixed;
+  width: 100%; 
+}
+
+td {
+  word-wrap: break-word;
+  font-size: 9px;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <!--link rel="icon" href="foa.jpg" type="image/x-icon"-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/style_consulta_reserva.css">
+    <link rel="stylesheet" type="text/css" href="css/style_consulta_reserva_1.css">    
+    <title>Consulta Reserva</title>
+</head>
+<body>
+    <form id="form-consulta" method="post">
+        <label for="datah">Data:</label>
+        <input type="date" name="datah" id="datah">
+        <input type="submit" value="Buscar" class="botao-buscar">
+        <a href="#" class="botao-voltar" onclick="limparData()">Voltar</a>
+    </form>
+    
+    <div id="resultado"></div>
+
+    <script src="js/consultar_reservas.js"></script>
+</body>
+</html>
