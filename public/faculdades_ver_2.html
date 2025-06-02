@@ -30,6 +30,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Curso</th>
+                        <th>Professor ID</th>
                         <th>Ativo</th>
                         <th>Ações</th>
                     </tr>
@@ -52,6 +53,10 @@
                             <div class="mb-3">
                                 <label for="fac_cur" class="form-label">Curso:</label>
                                 <input type="text" class="form-control" id="fac_cur" name="fac_cur" maxlength="50" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="professor_id" class="form-label">Professor ID (opcional):</label>
+                                <input type="number" class="form-control" id="professor_id" name="professor_id">
                             </div>
                             <input type="hidden" id="fac_id" name="fac_id">
                             <button type="submit" class="btn btn-primary" id="submitButton">Cadastrar</button>

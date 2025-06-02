@@ -1,3 +1,4 @@
+// src/controllers/faculdadeController.js
 const FaculdadeModel = require('../models/faculdadeModel');
 
 class FaculdadeController {
@@ -12,11 +13,17 @@ class FaculdadeController {
 
     static async createFaculdade(req, res) {
         try {
-            const { fac_cur } = req.body;
+            const { fac_cur, professor_id } = req.body;
             if (!fac_cur) {
                 return res.status(400).json({ error: 'O campo fac_cur é obrigatório' });
             }
-            const faculdade = await FaculdadeModel.createFaculdade({ fac_cur });
+            if (professor_id && isNaN(parseInt(professor_id))) {
+                return res.status(400).json({ error: 'professor_id deve ser um número válido' });
+            }
+            const faculdade = await FaculdadeModel.createFaculdade({
+                fac_cur,
+                professor_id: professor_id ? parseInt(professor_id) : null
+            });
             res.status(201).json({ faculdade });
         } catch (error) {
             res.status(500).json({ error: `Erro ao criar faculdade: ${error.message}` });
@@ -37,11 +44,17 @@ class FaculdadeController {
 
     static async updateFaculdade(req, res) {
         try {
-            const { fac_cur } = req.body;
+            const { fac_cur, professor_id } = req.body;
             if (!fac_cur) {
                 return res.status(400).json({ error: 'O campo fac_cur é obrigatório' });
             }
-            const faculdade = await FaculdadeModel.updateFaculdade(req.params.id, { fac_cur });
+            if (professor_id && isNaN(parseInt(professor_id))) {
+                return res.status(400).json({ error: 'professor_id deve ser um número válido' });
+            }
+            const faculdade = await FaculdadeModel.updateFaculdade(req.params.id, {
+                fac_cur,
+                professor_id: professor_id ? parseInt(professor_id) : null
+            });
             if (!faculdade) {
                 return res.status(404).json({ error: 'Faculdade não encontrada' });
             }

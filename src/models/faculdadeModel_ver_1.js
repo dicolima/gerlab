@@ -1,14 +1,15 @@
+// src/models/faculdadeModel.js
 const pool = require('../database/db');
 
 class FaculdadeModel {
-    static async createFaculdade({ fac_cur }) {
+    static async createFaculdade({ fac_cur, professor_id }) {
         try {
             const query = `
-                INSERT INTO faculdade (fac_cur, ativo)
-                VALUES ($1, true)
+                INSERT INTO faculdade (fac_cur, professor_id, ativo)
+                VALUES ($1, $2, true)
                 RETURNING *;
             `;
-            const values = [fac_cur];
+            const values = [fac_cur, professor_id || null];
             const result = await pool.query(query, values);
             return result.rows[0];
         } catch (error) {
@@ -16,20 +17,21 @@ class FaculdadeModel {
         }
     }
 
+    // inserido para resolver o problema do select na página solicitacoes.html
     static async getAllFaculdades() {
-        try {
-            const query = 'SELECT fac_id, fac_cur, ativo FROM faculdade WHERE ativo = true';
-            const result = await pool.query(query);
-            return result.rows;
-        } catch (error) {
-            throw new Error(`Erro ao buscar faculdades: ${error.message}`);
-        }
+    try {
+        const query = 'SELECT fac_id, fac_cur AS fac_nom, ativo FROM faculdade WHERE ativo = true';
+        const result = await pool.query(query);
+        return result.rows;
+    } catch (error) {
+        throw new Error(`Erro ao buscar faculdades: ${error.message}`);
     }
+}
 
     static async getFaculdadeById(id) {
         try {
             const query = `
-                SELECT fac_id, fac_cur, ativo
+                SELECT fac_id, fac_cur, professor_id, ativo
                 FROM faculdade
                 WHERE fac_id = $1
             `;
@@ -40,15 +42,15 @@ class FaculdadeModel {
         }
     }
 
-    static async updateFaculdade(id, { fac_cur }) {
+    static async updateFaculdade(id, { fac_cur, professor_id }) {
         try {
             const query = `
                 UPDATE faculdade
-                SET fac_cur = $1
-                WHERE fac_id = $2
+                SET fac_cur = $1, professor_id = $2
+                WHERE fac_id = $3
                 RETURNING *;
             `;
-            const values = [fac_cur, id];
+            const values = [fac_cur, professor_id || null, id];
             const result = await pool.query(query, values);
             return result.rows[0];
         } catch (error) {

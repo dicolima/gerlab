@@ -16,16 +16,16 @@ class SolicitacaoController {
             const {
                 sol_nom, sol_sob, sol_eml, sol_mat, professor_id, faculdade_id, disciplina_id,
                 programa_id, predio_id, laboratorio_id, sol_dat_ini, sol_dat_fim, sol_hor_ini,
-                sol_hor_fim, qtd_alunos, semana_id
+                sol_hor_fim, qtd_alunos
             } = req.body;
             if (!sol_nom || !sol_sob || !sol_eml || !sol_mat || !professor_id || !faculdade_id ||
                 !disciplina_id || !programa_id || !sol_dat_ini || !sol_dat_fim || !sol_hor_ini ||
-                !sol_hor_fim || !qtd_alunos || !semana_id) {
+                !sol_hor_fim || !qtd_alunos) {
                 return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
             }
             if (isNaN(parseInt(professor_id)) || isNaN(parseInt(faculdade_id)) ||
                 isNaN(parseInt(disciplina_id)) || isNaN(parseInt(programa_id)) ||
-                isNaN(parseInt(qtd_alunos)) || isNaN(parseInt(semana_id))) {
+                isNaN(parseInt(qtd_alunos))) {
                 return res.status(400).json({ error: 'Campos numéricos inválidos' });
             }
             const solicitacao = await SolicitacaoModel.createSolicitacao({
@@ -34,7 +34,6 @@ class SolicitacaoController {
                 programa_id: parseInt(programa_id), predio_id: predio_id ? parseInt(predio_id) : null,
                 laboratorio_id: laboratorio_id ? parseInt(laboratorio_id) : null,
                 sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim, qtd_alunos: parseInt(qtd_alunos),
-                semana_id: parseInt(semana_id),
                 sol_sts: 'Pendente'
             });
             res.status(201).json({ solicitacao });
@@ -60,16 +59,16 @@ class SolicitacaoController {
             const {
                 sol_nom, sol_sob, sol_eml, sol_mat, professor_id, faculdade_id, disciplina_id,
                 programa_id, predio_id, laboratorio_id, sol_dat_ini, sol_dat_fim, sol_hor_ini,
-                sol_hor_fim, qtd_alunos, semana_id
+                sol_hor_fim, qtd_alunos
             } = req.body;
             if (!sol_nom || !sol_sob || !sol_eml || !sol_mat || !professor_id || !faculdade_id ||
                 !disciplina_id || !programa_id || !sol_dat_ini || !sol_dat_fim || !sol_hor_ini ||
-                !sol_hor_fim || !qtd_alunos || !semana_id) {
+                !sol_hor_fim || !qtd_alunos) {
                 return res.status(400).json({ error: 'Campos obrigatórios ausentes' });
             }
             if (isNaN(parseInt(professor_id)) || isNaN(parseInt(faculdade_id)) ||
                 isNaN(parseInt(disciplina_id)) || isNaN(parseInt(programa_id)) ||
-                isNaN(parseInt(qtd_alunos)) || isNaN(parseInt(semana_id))) {
+                isNaN(parseInt(qtd_alunos))) {
                 return res.status(400).json({ error: 'Campos numéricos inválidos' });
             }
             const solicitacao = await SolicitacaoModel.updateSolicitacao(req.params.id, {
@@ -78,7 +77,6 @@ class SolicitacaoController {
                 programa_id: parseInt(programa_id), predio_id: predio_id ? parseInt(predio_id) : null,
                 laboratorio_id: laboratorio_id ? parseInt(laboratorio_id) : null,
                 sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim, qtd_alunos: parseInt(qtd_alunos),
-                semana_id: parseInt(semana_id),
                 sol_sts: 'Pendente'
             });
             if (!solicitacao) {

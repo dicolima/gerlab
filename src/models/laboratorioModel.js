@@ -153,46 +153,8 @@ class LaboratorioModel {
         console.error('Erro em getAvailableLaboratorios:', error);
         throw new Error(`Erro ao buscar laboratórios disponíveis: ${error.message}`);
     }
-}
+  }
     
-//     //usar esse código abaixo se não funcionar a filtragem em solicitacoes
-//     static async getAvailableLaboratorios({ predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_hor_ini, sol_hor_fim }) {
-//     try {
-//         console.log('getAvailableLaboratorios chamado com:', { predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_hor_ini, sol_hor_fim });
-//         const query = `
-//             SELECT l.lab_id, l.lab_num, l.lab_nom, l.ativo
-//             FROM laboratorio l
-//             JOIN laboratorio_programa lp ON lp.laboratorio_id = l.lab_id
-//             LEFT JOIN reserva r ON r.laboratorio_id = l.lab_id
-//                 AND r.data_reserva = $4
-//                 AND (
-//                     (r.horario_inicio <= $5 AND r.horario_fim > $5)
-//                     OR (r.horario_inicio < $6 AND r.horario_fim >= $6)
-//                     OR (r.horario_inicio >= $5 AND r.horario_fim <= $6)
-//                 )
-//                 AND r.ativo = true
-//             WHERE l.predio_id = $1
-//             AND lp.programa_id = $2
-//             AND l.lab_sem >= $3
-//             AND l.ativo = true
-//             AND lp.ativo = true
-//             AND r.id_reserva IS NULL
-//         `;
-//         const result = await pool.query(query, [
-//             predio_id,
-//             programa_id,
-//             qtd_alunos,
-//             sol_dat_ini,
-//             sol_hor_ini,
-//             sol_hor_fim
-//         ]);
-//         console.log('Laboratórios disponíveis:', result.rows);
-//         return result.rows;
-//     } catch (error) {
-//         console.error('Erro em getAvailableLaboratorios:', error);
-//         throw new Error(`Erro ao buscar laboratórios disponíveis: ${error.message}`);
-//     }
-// }
 }
 
 module.exports = LaboratorioModel;

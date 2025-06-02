@@ -1,3 +1,5 @@
+// public/js/faculdades.js
+
 // Carregar nome do usuário
 async function loadUserGreeting() {
     try {
@@ -59,6 +61,7 @@ async function loadFaculdades() {
             row.innerHTML = `
                 <td>${fac.fac_id}</td>
                 <td>${fac.fac_cur}</td>
+                <td>${fac.professor_id || ''}</td>
                 <td>${fac.ativo ? 'Sim' : 'Não'}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" onclick="editFaculdade(${fac.fac_id})"><i class="fas fa-edit"></i> Editar</button>
@@ -92,6 +95,7 @@ async function editFaculdade(id) {
         const fac = data.faculdade;
         document.getElementById('fac_id').value = fac.fac_id;
         document.getElementById('fac_cur').value = fac.fac_cur;
+        document.getElementById('professor_id').value = fac.professor_id || '';
         document.getElementById('faculdadeModalLabel').textContent = 'Editar Faculdade';
         document.getElementById('submitButton').textContent = 'Atualizar';
         const modal = new bootstrap.Modal(document.getElementById('faculdadeModal'));
@@ -190,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const data = Object.fromEntries(formData);
+        data.professor_id = data.professor_id ? parseInt(data.professor_id) : null;
         const url = data.fac_id ? `/api/faculdades/${data.fac_id}` : '/api/faculdades';
         try {
             console.log('Enviando formulário:', data);

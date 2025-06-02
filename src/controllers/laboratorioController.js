@@ -136,22 +136,7 @@ class LaboratorioController {
         res.status(500).json({ error: `Erro ao buscar laboratórios disponíveis: ${error.message}` });
     }
 }
-    // static async getAvailableLaboratorios(req, res) {
-    //     try {
-    //         const { predio_id, qtd_alunos, programa_id, sol_dat_ini, sol_hor_ini, sol_hor_fim } = req.query;
-    //         const laboratorios = await LaboratorioModel.getAvailableLaboratorios({
-    //             predio_id: predio_id ? parseInt(predio_id) : null,
-    //             qtd_alunos: qtd_alunos ? parseInt(qtd_alunos) : null,
-    //             programa_id: programa_id ? parseInt(programa_id) : null,
-    //             sol_dat_ini,
-    //             sol_hor_ini,
-    //             sol_hor_fim
-    //         });
-    //         res.json({ laboratorios });
-    //     } catch (error) {
-    //         res.status(500).json({ error: `Erro ao buscar laboratórios disponíveis: ${error.message}` });
-    //     }
-    // }
+    
 }
 
 module.exports = LaboratorioController;

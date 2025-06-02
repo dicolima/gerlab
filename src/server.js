@@ -15,7 +15,6 @@ const solicitacaoRoutes = require('./routes/solicitacaoRoutes'); // Adicionado
 const aprovacaoRoutes = require('./routes/aprovacaoRoutes'); // Adicionado
 const reservaRoutes = require('./routes/reservaRoutes');
 
-
 const app = express();
 
 // Middleware
@@ -57,6 +56,7 @@ app.use('/api/aprovacoes', aprovacaoRoutes); // Adicionado
 app.use('/api/reservas', reservaRoutes);
 // Rotas
 //app.use('/api', reservaRoutes);
+app.use('/api/semanas', require('./routes/semanaRoutes'));
 
 app.use(express.static(path.join(__dirname, '../public'), {
   setHeaders: (res, path) => {

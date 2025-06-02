@@ -224,43 +224,6 @@ async function loadProgramasSelect() {
     }
 }
 
-// Carregar dias da semana no select
-async function loadSemanasSelect() {
-    try {
-        console.log('Carregando dias da semana para o select...');
-        const response = await fetch('/api/semanas', {
-            method: 'GET',
-            credentials: 'include'
-        });
-        console.log('Resposta do endpoint /api/semanas:', response.status, response.statusText);
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Erro ao carregar dias da semana! Status: ${response.status}, Mensagem: ${errorData.error || 'Desconhecida'}`);
-        }
-        const data = await response.json();
-        console.log('Dados dos dias da semana:', data);
-        const select = document.getElementById('semana_id');
-        if (!select) {
-            throw new Error('Elemento #semana_id não encontrado no DOM');
-        }
-        select.innerHTML = '<option value="">Selecione um dia da semana</option>';
-        if (!data.semanas || !Array.isArray(data.semanas)) {
-            throw new Error('Formato de dados de semanas inválido');
-        }
-        data.semanas.filter(s => s.ativo).forEach(sem => {
-            const option = document.createElement('option');
-            option.value = sem.sem_id;
-            option.text = sem.sem_dia;
-            select.appendChild(option);
-        });
-        select.disabled = false;
-    } catch (error) {
-        console.error('Erro ao carregar dias da semana:', error);
-        showFeedback('Erro ao carregar dias da semana: ' + error.message, 'danger');
-        document.getElementById('semana_id').disabled = true;
-    }
-}
-
 // Carregar laboratórios no select com base em predio, programa, qtd_alunos, data e horário
 async function loadLaboratoriosSelect(predio_id, programa_id, qtd_alunos, sol_dat_ini, sol_dat_fim, sol_hor_ini, sol_hor_fim) {
     try {
@@ -335,12 +298,12 @@ async function loadSolicitacoes() {
         tableBody.innerHTML = '';
         if (!data.solicitacoes || !Array.isArray(data.solicitacoes)) {
             console.warn('Nenhuma solicitação encontrada ou formato de dados inválido');
-            tableBody.innerHTML = '<tr><td colspan="10" class="text-center">Nenhuma solicitação encontrada</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma solicitação encontrada</td></tr>';
             return;
         }
         if (data.solicitacoes.length === 0) {
             console.log('Lista de solicitações vazia');
-            tableBody.innerHTML = '<tr><td colspan="10" class="text-center">Nenhuma solicitação cadastrada</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Nenhuma solicitação cadastrada</td></tr>';
             return;
         }
         data.solicitacoes.forEach(sol => {
@@ -353,7 +316,6 @@ async function loadSolicitacoes() {
                 <td>${sol.professor_nome || 'Desconhecido'}</td>
                 <td>${sol.sol_dat_ini || 'N/A'}</td>
                 <td>${sol.sol_hor_ini} - ${sol.sol_hor_fim}</td>
-                <td>${sol.semana_nome || 'N/A'}</td>
                 <td>${sol.sol_sts || 'Pendente'}</td>
                 <td>
                     <button class="btn btn-sm btn-primary" onclick="editSolicitacao(${sol.id})"><i class="fas fa-edit"></i> Editar</button>
@@ -368,7 +330,7 @@ async function loadSolicitacoes() {
         console.error('Erro ao carregar solicitações:', error);
         const tableBody = document.getElementById('solicitacoesTable');
         if (tableBody) {
-            tableBody.innerHTML = '<tr><td colspan="10" class="text-center">Erro ao carregar solicitações</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="9" class="text-center">Erro ao carregar solicitações</td></tr>';
         }
         showFeedback(`Erro ao carregar solicitações: ${error.message}`, 'danger');
     }
@@ -412,8 +374,6 @@ async function editSolicitacao(id) {
         document.getElementById('sol_hor_ini').value = sol.sol_hor_ini;
         document.getElementById('sol_hor_fim').value = sol.sol_hor_fim;
         document.getElementById('qtd_alunos').value = sol.qtd_alunos;
-        await loadSemanasSelect();
-        document.getElementById('semana_id').value = sol.semana_id || '';
         document.getElementById('solicitacaoModalLabel').textContent = 'Editar Solicitação';
         document.getElementById('submitButton').textContent = 'Atualizar';
         const modal = new bootstrap.Modal(document.getElementById('solicitacaoModal'));
@@ -468,24 +428,10 @@ function showFeedback(message, type) {
 // Listener para o select de laboratórios
 document.getElementById('laboratorio_id').addEventListener('change', function() {
     const laboratorioId = this.value;
-    const semanaId = document.getElementById('semana_id').value;
     const submitButton = document.getElementById('submitButton');
     if (submitButton) {
-        submitButton.disabled = !laboratorioId || laboratorioId === '' || !semanaId || semanaId === '';
-        console.log('Botão Cadastrar:', submitButton.disabled ? 'desabilitado' : 'habilitado', 'laboratorio_id:', laboratorioId, 'semana_id:', semanaId);
-    } else {
-        console.error('Elemento #submitButton não encontrado no DOM');
-    }
-});
-
-// Listener para o select de semana
-document.getElementById('semana_id').addEventListener('change', function() {
-    const semanaId = this.value;
-    const laboratorioId = document.getElementById('laboratorio_id').value;
-    const submitButton = document.getElementById('submitButton');
-    if (submitButton) {
-        submitButton.disabled = !laboratorioId || laboratorioId === '' || !semanaId || semanaId === '';
-        console.log('Botão Cadastrar:', submitButton.disabled ? 'desabilitado' : 'habilitado', 'laboratorio_id:', laboratorioId, 'semana_id:', semanaId);
+        submitButton.disabled = !laboratorioId || laboratorioId === '';
+        console.log('Botão Cadastrar:', submitButton.disabled ? 'desabilitado' : 'habilitado', 'laboratorio_id:', laboratorioId);
     } else {
         console.error('Elemento #submitButton não encontrado no DOM');
     }
@@ -527,13 +473,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('programa_id').value = '';
         document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
         document.getElementById('laboratorio_id').disabled = true;
-        document.getElementById('semana_id').innerHTML = '<option value="">Selecione um dia da semana</option>';
-        document.getElementById('semana_id').disabled = false;
-        document.getElementById('sol_dat_ini').value = '';
-        document.getElementById('sol_dat_fim').value = '';
-        document.getElementById('sol_hor_ini').value = '';
-        document.getElementById('sol_hor_fim').value = '';
-        document.getElementById('qtd_alunos').value = '1';
         modalLabel.textContent = 'Cadastrar Nova Solicitação';
         submitButton.textContent = 'Cadastrar';
         if (feedback) feedback.style.display = 'none';
@@ -559,8 +498,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('programa_id').value = '';
         document.getElementById('laboratorio_id').innerHTML = '<option value="">Selecione um laboratório</option>';
         document.getElementById('laboratorio_id').disabled = true;
-        document.getElementById('semana_id').innerHTML = '<option value="">Selecione um dia da semana</option>';
-        document.getElementById('semana_id').disabled = false;
         document.getElementById('sol_dat_ini').value = '';
         document.getElementById('sol_dat_fim').value = '';
         document.getElementById('sol_hor_ini').value = '';
@@ -585,8 +522,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log('loadPrediosSelect concluído');
             await loadProgramasSelect();
             console.log('loadProgramasSelect concluído');
-            await loadSemanasSelect();
-            console.log('loadSemanasSelect concluído');
         } catch (error) {
             console.error('Erro ao carregar selects:', error);
             showFeedback('Erro ao carregar selects: ' + error.message, 'danger');
@@ -671,7 +606,6 @@ document.addEventListener('DOMContentLoaded', () => {
         data.programa_id = parseInt(data.programa_id);
         data.predio_id = data.predio_id ? parseInt(data.predio_id) : null;
         data.laboratorio_id = data.laboratorio_id ? parseInt(data.laboratorio_id) : null;
-        data.semana_id = data.semana_id ? parseInt(data.semana_id) : null;
         data.qtd_alunos = parseInt(data.qtd_alunos);
         const url = data.id ? `/api/solicitacoes/${data.id}` : '/api/solicitacoes';
 
