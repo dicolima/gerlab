@@ -5,11 +5,19 @@ const path = require('path');
 const ReservaController = require('../controllers/reservaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-router.get('/consultar_reservas.html', authMiddleware, (req, res) => {
+// router.get('/consultar_reservas.html', authMiddleware, (req, res) => {
+//   res.sendFile(path.join(__dirname, '../../public/consultar_reservas.html'));
+// });
+
+router.get('/consultar_reservas.html', (req, res) => {
   res.sendFile(path.join(__dirname, '../../public/consultar_reservas.html'));
 });
 
-router.post('/consultar_reservas', authMiddleware, (req, res) => {
+// router.post('/consultar_reservas', authMiddleware, (req, res) => {
+//   ReservaController.consultarReservas(req, res);
+// });
+
+router.post('/consultar_reservas', (req, res) => {
   ReservaController.consultarReservas(req, res);
 });
 
