@@ -30,22 +30,6 @@ async function loadUserGreeting() {
     }
 }
 
-// fetch('/api/user', { credentials: 'include' })
-//     .then(response => {
-//         if (!response.ok) {
-//             window.location.href = '/login.html';
-//             throw new Error('Não autenticado');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         document.getElementById('user-greeting').textContent = `Bem-vindo, ${data.usr_nom}`;
-//     })
-//     .catch(error => {
-//         console.error('Erro ao carregar usuário:', error);
-//         window.location.href = '/login.html';
-//     });
-
 // Carregar laboratórios no select
 async function loadLaboratoriosSelect() {
     try {

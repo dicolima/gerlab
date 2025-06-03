@@ -22,17 +22,6 @@ class ProgramaModel {
         }
     }
 
-    // //usar esse para resolver o problema do select no soliciatacoes se o debaixo não funcionar
-    // static async getAllProgramas() {
-    //     try {
-    //         const query = 'SELECT prg_id, prg_nom, ativo FROM programas WHERE ativo = true';
-    //         const result = await pool.query(query);
-    //         return result.rows;
-    //     } catch (error) {
-    //         throw new Error(`Erro ao buscar programas: ${error.message}`);
-    //     }
-    // }
-
     static async getAllProgramas() {
         try {
             const query = `
